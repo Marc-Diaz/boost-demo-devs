@@ -14,16 +14,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun PantallaParaTi(innerPadding: PaddingValues){
+fun PantallaTendencias(innerPadding: PaddingValues){
     Column(Modifier.fillMaxSize().padding(innerPadding),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp)){
         Text(
-            text = "Para ti",
+            text = "Tendencias",
             style = TextStyle(
                 fontSize = 36.sp
             )
         )
-
     }
 }
