@@ -6,8 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.toRoute
-import com.example.demo_boost.ui.screens.PantallaCamara
+import com.example.demo_boost.ui.screens.PantallaAR
 
 
 import com.example.demo_boost.ui.screens.PantallaHome
@@ -34,7 +33,7 @@ fun NavigationWrapper(innerPadding: PaddingValues, navController: NavHostControl
             PantallaTendencias(innerPadding)
         }
         composable<Destinations.PantallaCamara>{
-            PantallaCamara()
+            PantallaAR(arSession)
         }
     }
 }

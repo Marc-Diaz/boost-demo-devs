@@ -15,6 +15,8 @@ media3Exoplayer = "1.8.0"
 media3Ui = "1.8.0"
 androidbrowserhelper = "2.6.2"
 cameraLifecycle = "1.5.1"
+filamentAndroid = "1.17.1"
+uiGraphics = "1.9.4"
 
 
 [libraries]
@@ -39,6 +41,8 @@ androidx-media3-exoplayer = { group = "androidx.media3", name = "media3-exoplaye
 androidx-media3-ui = { group = "androidx.media3", name = "media3-ui", version.ref = "media3Ui" }
 androidbrowserhelper = { group = "com.google.androidbrowserhelper", name = "androidbrowserhelper", version.ref = "androidbrowserhelper" }
 androidx-camera-lifecycle = { group = "androidx.camera", name = "camera-lifecycle", version.ref = "cameraLifecycle" }
+filament-android = { group = "com.google.ar.sceneform", name = "filament-android", version.ref = "filamentAndroid" }
+androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics", version.ref = "uiGraphics" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
