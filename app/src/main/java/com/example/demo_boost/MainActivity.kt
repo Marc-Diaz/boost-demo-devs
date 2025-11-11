@@ -22,16 +22,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+
 import androidx.navigation.compose.rememberNavController
 import com.example.demo_boost.ui.navigation.Destinations
 import com.example.demo_boost.ui.navigation.NavigationItem
 import com.example.demo_boost.ui.navigation.NavigationWrapper
 import com.example.demo_boost.ui.theme.DemoboostTheme
-import com.google.ar.core.ArCoreApk
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()

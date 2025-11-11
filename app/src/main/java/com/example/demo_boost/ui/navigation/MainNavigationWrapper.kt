@@ -33,7 +33,7 @@ fun NavigationWrapper(innerPadding: PaddingValues, navController: NavHostControl
             PantallaTendencias(innerPadding)
         }
         composable<Destinations.PantallaCamara>{
-            PantallaAR(arSession)
+            PantallaAR()
         }
     }
 }

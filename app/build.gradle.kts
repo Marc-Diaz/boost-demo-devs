@@ -56,7 +56,6 @@ dependencies {
     implementation(libs.androidx.media3.ui)
     implementation(libs.androidbrowserhelper)
     implementation(libs.androidx.camera.lifecycle)
-    implementation(libs.filament.android)
     implementation(libs.androidx.ui.graphics)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -68,10 +67,6 @@ dependencies {
     implementation(libs.navigation.compose)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.coil.compose)
-    implementation("com.google.ar:core:1.51.0")
-    implementation("androidx.xr.arcore:arcore:1.0.0-alpha06")
-    implementation("com.google.android.filament:filament-android:1.36.0")
-    implementation("com.google.android.filament:filament-utils-android:1.36.0")
-    implementation("com.google.android.filament:gltfio-android:1.36.0")
-
+    implementation(libs.androidx.arcore)
+    implementation(libs.sceneview)
 }
