@@ -1,4 +1,5 @@
 [versions]
+accompanistPermissions = "0.37.3"
 agp = "8.13.0"
 arcore = "1.0.0-alpha07"
 arsceneview = "2.3.0"
@@ -26,6 +27,7 @@ sceneformUx = "1.17.1"
 
 
 [libraries]
+accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
 androidx-arcore = { module = "androidx.xr.arcore:arcore", version.ref = "arcore" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 arsceneview = { module = "io.github.sceneview:arsceneview", version.ref = "arsceneview" }

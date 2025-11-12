@@ -1,98 +1,121 @@
 package com.example.demo_boost.ui.screens
 
 
-import android.util.Log
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import com.google.ar.core.CameraConfig
+import androidx.compose.ui.platform.LocalContext
+import com.example.demo_boost.utils.createAnchorNode
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
 import com.google.ar.core.Config
 import io.github.sceneview.ar.ARScene
-import io.github.sceneview.ar.rememberARCameraStream
-import io.github.sceneview.node.ModelNode
 import io.github.sceneview.rememberEngine
-import io.github.sceneview.rememberEnvironmentLoader
 import io.github.sceneview.rememberMaterialLoader
 import io.github.sceneview.rememberModelLoader
 import io.github.sceneview.rememberNodes
-import com.google.ar.core.CameraConfigFilter
+import com.google.accompanist.permissions.rememberPermissionState
+import com.google.ar.core.Frame
+import com.google.ar.core.Plane
+import com.google.ar.core.TrackingFailureReason
+import io.github.sceneview.ar.arcore.createAnchorOrNull
+import io.github.sceneview.ar.arcore.getUpdatedPlanes
+import io.github.sceneview.ar.arcore.isValid
+import io.github.sceneview.ar.rememberARCameraNode
+import io.github.sceneview.rememberCollisionSystem
+import io.github.sceneview.rememberOnGestureListener
+import io.github.sceneview.rememberView
 
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun PantallaAR() {
+    ARContent()
+}
 
-    // Filament 3D Engine
+@Composable
+fun ARContent(){
     val engine = rememberEngine()
-
-    // Asset loaders
-
     val modelLoader = rememberModelLoader(engine)
     val materialLoader = rememberMaterialLoader(engine)
-    val environmentLoader = rememberEnvironmentLoader(engine)
+    val cameraNode = rememberARCameraNode(engine)
+    val childNodes = rememberNodes()
+    val view = rememberView(engine)
+    val collisionSystem = rememberCollisionSystem(view)
 
+    var planeRenderer by remember { mutableStateOf(true) }
+
+    var trackingFailureReason by remember {
+        mutableStateOf<TrackingFailureReason?>(null)
+    }
+    var frame by remember { mutableStateOf<Frame?>(null) }
     ARScene(
-        modifier = Modifier.fillMaxSize().background(Color.Red),
-
-        // Configure AR session features
-        sessionFeatures = setOf(),
-
-        // Configure AR session settings
-
+        modifier = Modifier.fillMaxSize(),
+        childNodes = childNodes,
+        engine = engine,
+        view = view,
+        modelLoader = modelLoader,
+        collisionSystem = collisionSystem,
         sessionConfiguration = { session, config ->
-            // Enable depth if supported on the device
             config.depthMode =
                 when (session.isDepthModeSupported(Config.DepthMode.AUTOMATIC)) {
                     true -> Config.DepthMode.AUTOMATIC
                     else -> Config.DepthMode.DISABLED
                 }
             config.instantPlacementMode = Config.InstantPlacementMode.LOCAL_Y_UP
-            config.lightEstimationMode = Config.LightEstimationMode.ENVIRONMENTAL_HDR
+            config.lightEstimationMode =
+                Config.LightEstimationMode.ENVIRONMENTAL_HDR
         },
-
-        // Enable plane detection visualization
-        planeRenderer = true,
-
-        // Configure camera stream
-        cameraStream = rememberARCameraStream(materialLoader),
-
-        // Session lifecycle callbacks
-        onSessionCreated = { session ->
-            // Handle session creation
+        cameraNode = cameraNode,
+        planeRenderer = planeRenderer,
+        onTrackingFailureChanged = {
+            trackingFailureReason = it
         },
-        onSessionResumed = { session ->
-            // Handle session resume
-        },
-        onSessionPaused = { session ->
-            // Handle session pause
-        },
-
-        // Frame update callback
         onSessionUpdated = { session, updatedFrame ->
-            // Process AR frame updates
-        },
+            frame = updatedFrame
 
-        // Error handling
-        onSessionFailed = { exception ->
-            // Handle ARCore session errors
+            if (childNodes.isEmpty()) {
+                updatedFrame.getUpdatedPlanes()
+                    .firstOrNull { it.type == Plane.Type.HORIZONTAL_UPWARD_FACING }
+                    ?.let { it.createAnchorOrNull(it.centerPose) }?.let { anchor ->
+                        childNodes += createAnchorNode(
+                            engine = engine,
+                            modelLoader = modelLoader,
+                            materialLoader = materialLoader,
+                            anchor = anchor
+                        )
+                    }
+            }
         },
-
-        // Track camera tracking state changes
-        onTrackingFailureChanged = { trackingFailureReason ->
-            // Handle tracking failures
-        },
-        childNodes = rememberNodes{
-            add(
-                ModelNode(
-                    // Create a single instance model from assets file
-                    modelInstance = modelLoader.createModelInstance(
-                        assetFileLocation = "models/prueba_cloth_Jordi.glb"
-                    ),
-                    // Make the model fit into a 1 unit cube
-                    scaleToUnits = 1.0f
-                )
-            )
-        }
+        onGestureListener = rememberOnGestureListener(
+            onSingleTapConfirmed = { motionEvent, node ->
+                if (node == null) {
+                    val hitResults = frame?.hitTest(motionEvent.x, motionEvent.y)
+                    hitResults?.firstOrNull {
+                        it.isValid(
+                            depthPoint = false,
+                            point = false
+                        )
+                    }?.createAnchorOrNull()
+                        ?.let { anchor ->
+                            planeRenderer = false
+                            childNodes += createAnchorNode(
+                                engine = engine,
+                                modelLoader = modelLoader,
+                                materialLoader = materialLoader,
+                                anchor = anchor
+                            )
+                        }
+                }
+            })
     )
 }
