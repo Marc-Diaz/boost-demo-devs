@@ -1,6 +1,7 @@
 [versions]
 agp = "8.13.0"
 arcore = "1.0.0-alpha07"
+arsceneview = "2.3.0"
 coilCompose = "2.7.0"
 core = "1.51.0"
 kotlin = "2.0.21"
@@ -27,6 +28,7 @@ sceneformUx = "1.17.1"
 [libraries]
 androidx-arcore = { module = "androidx.xr.arcore:arcore", version.ref = "arcore" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+arsceneview = { module = "io.github.sceneview:arsceneview", version.ref = "arsceneview" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
 core = { module = "com.google.ar:core", version.ref = "core" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
