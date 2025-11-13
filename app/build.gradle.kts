@@ -70,4 +70,5 @@ dependencies {
     implementation(libs.androidx.arcore)
     implementation(libs.sceneview)
     implementation(libs.arsceneview)
+    implementation(libs.tasks.vision)
 }

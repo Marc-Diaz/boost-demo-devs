@@ -21,6 +21,7 @@ media3Ui = "1.8.0"
 androidbrowserhelper = "2.6.2"
 cameraLifecycle = "1.5.1"
 filamentAndroid = "1.17.1"
+tasksVision = "latest.release"
 uiGraphics = "1.9.4"
 coreVersion = "1.17.1"
 sceneformUx = "1.17.1"
@@ -57,6 +58,7 @@ androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics", ve
 sceneview = { module = "io.github.sceneview:sceneview", version.ref = "sceneview" }
 sceneform-core = { group = "com.google.ar.sceneform", name = "core", version.ref = "coreVersion" }
 sceneform-ux = { group = "com.google.ar.sceneform.ux", name = "sceneform-ux", version.ref = "sceneformUx" }
+tasks-vision = { module = "com.google.mediapipe:tasks-vision", version.ref = "tasksVision" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

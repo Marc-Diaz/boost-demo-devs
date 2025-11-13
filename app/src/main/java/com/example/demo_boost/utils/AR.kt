@@ -3,6 +3,12 @@ package com.example.demo_boost.utils
 import androidx.compose.ui.graphics.Color
 import com.google.android.filament.Engine
 import com.google.ar.core.Anchor
+import com.google.ar.core.Frame
+import com.google.ar.core.Pose
+import com.google.mediapipe.tasks.components.containers.NormalizedLandmark
+import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarker
+import dev.romainguy.kotlin.math.Float3
+import io.github.sceneview.ar.arcore.position
 import io.github.sceneview.ar.node.AnchorNode
 import io.github.sceneview.loaders.MaterialLoader
 import io.github.sceneview.loaders.ModelLoader
@@ -45,3 +51,16 @@ fun createAnchorNode(
     }
     return anchorNode
 }
+fun landmarkToWorldPosition(
+    landmark: NormalizedLandmark,
+    frame: Frame?,
+    depthScale: Float = 0.5f
+): Float3 {
+    val cameraPose = frame?.camera?.pose ?: Pose.IDENTITY
+    val px = (landmark.x() - 0.5f) // normalizado a [-0.5, 0.5]
+    val py = (0.5f - landmark.y()) // invertir Y
+    val pz = -landmark.z() * depthScale
+    val pose = cameraPose.compose(Pose(floatArrayOf(px, py, pz), floatArrayOf(0f,0f,0f,1f)))
+    return pose.position
+}
+

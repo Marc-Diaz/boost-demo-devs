@@ -22,12 +22,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 import androidx.navigation.compose.rememberNavController
 import com.example.demo_boost.ui.navigation.Destinations
 import com.example.demo_boost.ui.navigation.NavigationItem
 import com.example.demo_boost.ui.navigation.NavigationWrapper
 import com.example.demo_boost.ui.theme.DemoboostTheme
+import com.example.demo_boost.viewmodels.PoseViewModel
+import com.example.demo_boost.viewmodels.PoseViewModelFactory
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,6 +46,7 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     fun MyApp() {
+        //val poseViewModel: PoseViewModel = viewModel<PoseViewModel>(factory = PoseViewModelFactory(application))
         var selectedItem: Int by remember { mutableIntStateOf(0) }
         val items = listOf(
             NavigationItem("HOME", Icons.Default.Home, Destinations.PantallaHome, 0),

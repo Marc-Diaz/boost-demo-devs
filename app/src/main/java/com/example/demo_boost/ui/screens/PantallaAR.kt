@@ -2,33 +2,31 @@ package com.example.demo_boost.ui.screens
 
 
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import com.example.demo_boost.viewmodels.PoseViewModel
 import com.example.demo_boost.utils.createAnchorNode
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.isGranted
+import com.example.demo_boost.utils.landmarkToWorldPosition
+
 import com.google.ar.core.Config
 import io.github.sceneview.ar.ARScene
 import io.github.sceneview.rememberEngine
 import io.github.sceneview.rememberMaterialLoader
 import io.github.sceneview.rememberModelLoader
 import io.github.sceneview.rememberNodes
-import com.google.accompanist.permissions.rememberPermissionState
+
 import com.google.ar.core.Frame
-import com.google.ar.core.Plane
 import com.google.ar.core.TrackingFailureReason
+import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarkerResult
 import io.github.sceneview.ar.arcore.createAnchorOrNull
-import io.github.sceneview.ar.arcore.getUpdatedPlanes
 import io.github.sceneview.ar.arcore.isValid
 import io.github.sceneview.ar.rememberARCameraNode
 import io.github.sceneview.rememberCollisionSystem
@@ -36,14 +34,10 @@ import io.github.sceneview.rememberOnGestureListener
 import io.github.sceneview.rememberView
 
 
-@OptIn(ExperimentalPermissionsApi::class)
-@Composable
-fun PantallaAR() {
-    ARContent()
-}
 
 @Composable
-fun ARContent(){
+fun PantallaAR() {
+    val contex = LocalContext.current
     val engine = rememberEngine()
     val modelLoader = rememberModelLoader(engine)
     val materialLoader = rememberMaterialLoader(engine)
@@ -51,13 +45,21 @@ fun ARContent(){
     val childNodes = rememberNodes()
     val view = rememberView(engine)
     val collisionSystem = rememberCollisionSystem(view)
-
     var planeRenderer by remember { mutableStateOf(true) }
-
     var trackingFailureReason by remember {
         mutableStateOf<TrackingFailureReason?>(null)
     }
     var frame by remember { mutableStateOf<Frame?>(null) }
+    var poseLandmarks by remember { mutableStateOf<PoseLandmarkerResult?>(null) }
+    /*
+    LaunchedEffect(poseViewModel) {
+        poseViewModel.poseResults.observeForever { result ->
+            poseLandmarks = result?.results[0]
+            }
+
+
+    }
+    */
     ARScene(
         modifier = Modifier.fillMaxSize(),
         childNodes = childNodes,
@@ -82,19 +84,16 @@ fun ARContent(){
         },
         onSessionUpdated = { session, updatedFrame ->
             frame = updatedFrame
-
-            if (childNodes.isEmpty()) {
-                updatedFrame.getUpdatedPlanes()
-                    .firstOrNull { it.type == Plane.Type.HORIZONTAL_UPWARD_FACING }
-                    ?.let { it.createAnchorOrNull(it.centerPose) }?.let { anchor ->
-                        childNodes += createAnchorNode(
-                            engine = engine,
-                            modelLoader = modelLoader,
-                            materialLoader = materialLoader,
-                            anchor = anchor
-                        )
+            poseLandmarks?.let {
+                poseLandmarks!!.landmarks().forEachIndexed  { index, landmark ->
+                    for (normalizedLandmark in landmark) {
+                        val worldPosition = landmarkToWorldPosition(normalizedLandmark, updatedFrame)
+                        childNodes[index].worldPosition = worldPosition
                     }
+                }
             }
+
+
         },
         onGestureListener = rememberOnGestureListener(
             onSingleTapConfirmed = { motionEvent, node ->
@@ -107,7 +106,6 @@ fun ARContent(){
                         )
                     }?.createAnchorOrNull()
                         ?.let { anchor ->
-                            planeRenderer = false
                             childNodes += createAnchorNode(
                                 engine = engine,
                                 modelLoader = modelLoader,
@@ -119,3 +117,4 @@ fun ARContent(){
             })
     )
 }
+
