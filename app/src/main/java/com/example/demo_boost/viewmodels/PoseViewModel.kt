@@ -2,6 +2,8 @@ package com.example.demo_boost.viewmodels
 
 import android.app.Application
 import android.util.Log
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,38 +12,38 @@ import com.google.mediapipe.tasks.vision.core.RunningMode
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class PoseViewModel(application: Application) : ViewModel() {
+class PoseViewModel(application: Application) : AndroidViewModel(application) {
 
-    // Estado que va a contener los resultados del pose
-    private var _poseResults = MutableLiveData<PoseLandmarkerHelper.ResultBundle?>(null)
-        private set
-    val poseResults = _poseResults
+    // LiveData para exponer los resultados del pose
+    private val _poseResults = MutableLiveData<PoseLandmarkerHelper.ResultBundle?>()
+    val poseResults: LiveData<PoseLandmarkerHelper.ResultBundle?> = _poseResults
 
-    var poseHelper: PoseLandmarkerHelper? = null
-        private set
+    // LiveData para notificar errores
+    private val _poseErrors = MutableLiveData<String>()
+    val poseErrors: LiveData<String> = _poseErrors
 
-    init {
-        viewModelScope.launch(Dispatchers.Main){
-            poseHelper = PoseLandmarkerHelper(
-                context = application.applicationContext,
-                runningMode = RunningMode.LIVE_STREAM,
-                currentDelegate = PoseLandmarkerHelper.Companion.DELEGATE_CPU,
-                poseLandmarkerHelperListener = object : PoseLandmarkerHelper.LandmarkerListener {
-                    override fun onError(error: String, errorCode: Int) {
-                        Log.e("PoseViewModel", "Error: $error")
-                    }
-
-                    override fun onResults(resultBundle: PoseLandmarkerHelper.ResultBundle) {
-                        // Aquí es donde accedes a los resultados
-                        _poseResults.value = resultBundle
-                    }
+    // PoseLandmarkerHelper
+    val poseHelper: PoseLandmarkerHelper by lazy {
+        PoseLandmarkerHelper(
+            context = getApplication<Application>().applicationContext,
+            runningMode = RunningMode.LIVE_STREAM,
+            currentDelegate = PoseLandmarkerHelper.DELEGATE_CPU,
+            poseLandmarkerHelperListener = object : PoseLandmarkerHelper.LandmarkerListener {
+                override fun onError(error: String, errorCode: Int) {
+                    Log.e("PoseViewModel", "Error: $error (Code: $errorCode)")
+                    _poseErrors.postValue(error)
                 }
-            )
-        }
+
+                override fun onResults(resultBundle: PoseLandmarkerHelper.ResultBundle) {
+                    _poseResults.postValue(resultBundle)
+                }
+            }
+        )
     }
 
+    // Limpiar recursos cuando se destruye el ViewModel
     override fun onCleared() {
         super.onCleared()
-        poseHelper?.clearPoseLandmarker()
+        poseHelper.clearPoseLandmarker()
     }
 }

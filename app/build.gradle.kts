@@ -57,6 +57,7 @@ dependencies {
     implementation(libs.androidbrowserhelper)
     implementation(libs.androidx.camera.lifecycle)
     implementation(libs.androidx.ui.graphics)
+    implementation(libs.sceneform.base)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

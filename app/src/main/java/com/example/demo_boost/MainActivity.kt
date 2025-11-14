@@ -46,7 +46,7 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     fun MyApp() {
-        //val poseViewModel: PoseViewModel = viewModel<PoseViewModel>(factory = PoseViewModelFactory(application))
+        val poseViewModel: PoseViewModel = viewModel<PoseViewModel>(factory = PoseViewModelFactory(application))
         var selectedItem: Int by remember { mutableIntStateOf(0) }
         val items = listOf(
             NavigationItem("HOME", Icons.Default.Home, Destinations.PantallaHome, 0),
@@ -76,7 +76,7 @@ class MainActivity : ComponentActivity() {
                 }
             },
             content = { innerPadding ->
-                NavigationWrapper(innerPadding, navController)
+                NavigationWrapper(innerPadding, navController, poseViewModel)
             }
         )
     }

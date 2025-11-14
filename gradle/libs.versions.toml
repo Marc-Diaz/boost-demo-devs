@@ -25,6 +25,7 @@ tasksVision = "latest.release"
 uiGraphics = "1.9.4"
 coreVersion = "1.17.1"
 sceneformUx = "1.17.1"
+sceneformBase = "1.17.1"
 
 
 [libraries]
@@ -59,6 +60,7 @@ sceneview = { module = "io.github.sceneview:sceneview", version.ref = "sceneview
 sceneform-core = { group = "com.google.ar.sceneform", name = "core", version.ref = "coreVersion" }
 sceneform-ux = { group = "com.google.ar.sceneform.ux", name = "sceneform-ux", version.ref = "sceneformUx" }
 tasks-vision = { module = "com.google.mediapipe:tasks-vision", version.ref = "tasksVision" }
+sceneform-base = { group = "com.google.ar.sceneform", name = "sceneform-base", version.ref = "sceneformBase" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
